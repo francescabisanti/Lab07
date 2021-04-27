@@ -5,7 +5,11 @@
 package it.polito.tdp.poweroutages;
 
 import java.net.URL;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
+
+import it.polito.tdp.poweroutages.model.EventBlackOut;
 import it.polito.tdp.poweroutages.model.Model;
 import it.polito.tdp.poweroutages.model.Nerc;
 import javafx.event.ActionEvent;
@@ -15,7 +19,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class FXMLController {
-
+	
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;
 
@@ -39,6 +43,29 @@ public class FXMLController {
     @FXML
     void doRun(ActionEvent event) {
     	txtResult.clear();
+    	String anniS= this.txtYears.getText();
+    	String oreS= this.txtHours.getText();
+    	int anniMax=0;
+    	int oreMax=0;
+    	try {
+    		anniMax= Integer.parseInt(anniS);
+    		oreMax= Integer.parseInt(oreS);
+    	} catch( NumberFormatException e) {
+    		this.txtResult.setText("Inserisci correttamente il numero di ore e anni!");
+    	}
+    	Nerc n= this.cmbNerc.getValue();
+    	Set <EventBlackOut> eventi= model.calcolaSottoInsiemeEventi(n.getValue(), anniMax, oreMax);
+    	String result="";
+    	int clienti= this.model.calcolaNumeroClienti(eventi);
+    	result=result+"Il numeroClienti afflitti e': "+clienti+"\n";
+    	float contoOre= this.model.calcolaNumOre(eventi);
+    	result=result+"Il numero ore totali e': "+contoOre+"\n";
+    	
+    	for(EventBlackOut e: eventi) {
+    		result=result+ e.getAnno()+" "+e.getDate_event_began()+" "+e.getDate_event_finished()+" "+e.getOreDisservizio()+" "+e.getCustomers_affected()+"\n";
+    	}
+    	
+    	this.txtResult.setText(result);
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -54,5 +81,8 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	for(Nerc n: model.getNercList()) {
+    		this.cmbNerc.getItems().add(n);
+    	}
     }
 }
