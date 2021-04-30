@@ -6,6 +6,7 @@ package it.polito.tdp.poweroutages;
 
 import java.net.URL;
 import java.util.HashSet;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class FXMLController {
     		this.txtResult.setText("Inserisci correttamente il numero di ore e anni!");
     	}
     	Nerc n= this.cmbNerc.getValue();
-    	Set <EventBlackOut> eventi= model.calcolaSottoInsiemeEventi(n.getValue(), anniMax, oreMax);
+    	List <EventBlackOut> eventi= model.calcolaSottoInsiemeEventi(n.getValue(), anniMax, oreMax);
     	String result="";
     	int clienti= this.model.calcolaNumeroClienti(eventi);
     	result=result+"Il numeroClienti afflitti e': "+clienti+"\n";
